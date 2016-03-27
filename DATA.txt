@@ -1,0 +1,147 @@
+Read 19316 fields
+
+Keys seen:
+      11   0% additionalEventData
+      21   0% apiVersion
+   19316 100% awsRegion
+     940   5% errorCode
+     936   5% errorMessage
+   19316 100% eventID
+   19316 100% eventName
+   19316 100% eventSource
+   19316 100% eventTime
+   19316 100% eventType
+   19316 100% eventVersion
+       1   0% readOnly
+   19316 100% recipientAccountId
+   19305 100% requestID
+   19316 100% requestParameters
+       1   0% resources
+   19316 100% responseElements
+   19316 100% sourceIPAddress
+   19316 100% userAgent
+   19316 100% userIdentity
+
+Key values:
+  additionalEventData
+        11 100% <a Hash>
+  apiVersion
+         9  43% 2016_01_28
+         6  29% 2012_03_15
+         4  19% 2012-08-10
+         2  10% 20140328
+  awsRegion
+     18921  98% eu-west-1
+       395   2% us-east-1
+  errorCode
+       251  27% ValidationException
+       223  24% Client.InvalidKeyPair.NotFound
+       157  17% Client.UnauthorizedOperation
+        72   8% NoSuchCORSConfiguration
+        69   7% NoSuchLifecycleConfiguration
+        56   6% NoSuchBucketPolicy
+        41   4% Client.InvalidSnapshot.NotFound
+        35   4% NoSuchTagSet
+        12   1% AccessDenied
+        10   1% Client.InvalidParameterValue
+                (3 more values)
+  errorMessage
+                (various strings)
+  eventID
+         1   0% 087a971c-b87e-4890-a188-77403cb743d2
+         1   0% eee27fd4-0d9f-4908-8b63-c20fafefc3ad
+         1   0% 1c4bcaec-d13b-4632-bde8-23b49363aad6
+         1   0% 7022d0b8-334e-4fa7-b81a-6ab7ceeb7275
+         1   0% 26b5663c-a931-4d77-bc12-397a9c61e45b
+         1   0% 186990d4-0672-48ff-accf-851b7b8c29bf
+         1   0% f6105885-ea03-46c1-96ae-4b51f01c05bd
+         1   0% e2a6b3a3-080b-4560-97d9-6c3a72d6228f
+         1   0% 526d7966-6c18-48a5-b9c3-6a715e7259b1
+         1   0% 08fe4787-7df0-4eea-b6a9-9c27d3c9c80a
+                (19306 more values)
+  eventName
+      5251  27% DescribeInstances
+      3589  19% DescribeInstanceHealth
+      3158  16% DescribeTags
+      1600   8% DescribeStacks
+      1449   8% DescribeDBInstances
+       296   2% RunInstances
+       290   2% DescribeVolumes
+       256   1% DescribeLoadBalancers
+       245   1% DescribeSubnets
+       244   1% GetTopicAttributes
+                (89 more values)
+  eventSource
+     10207  53% ec2.amazonaws.com
+      3881  20% elasticloadbalancing.amazonaws.com
+      1905  10% cloudformation.amazonaws.com
+      1449   8% rds.amazonaws.com
+       787   4% s3.amazonaws.com
+       369   2% iam.amazonaws.com
+       365   2% autoscaling.amazonaws.com
+       273   1% sns.amazonaws.com
+        22   0% lambda.amazonaws.com
+        18   0% monitoring.amazonaws.com
+                (7 more values)
+  eventTime
+        49   0% 2016-03-23T10:08:50Z
+        48   0% 2016-03-23T10:08:52Z
+        45   0% 2016-03-23T10:08:48Z
+        41   0% 2016-03-23T10:08:51Z
+        41   0% 2016-03-23T10:08:53Z
+        39   0% 2016-03-23T10:08:44Z
+        38   0% 2016-03-23T10:08:49Z
+        36   0% 2016-03-23T10:08:45Z
+        33   0% 2016-03-23T10:20:36Z
+        32   0% 2016-03-23T10:08:47Z
+                (13174 more values)
+  eventType
+     19305 100% AwsApiCall
+        11   0% AwsConsoleSignIn
+  eventVersion
+     18656  97% 1.03
+       380   2% 1.02
+       280   1% 1.04
+  readOnly
+         1 100% <a TrueClass>
+  recipientAccountId
+                (the account id)
+  requestID
+         1   0% 120bc155-1792-4362-a221-42a662a0cc89
+         1   0% f57b09e2-f0e0-11e5-b19e-65632ba390fc
+         1   0% e0d1c6ca-e36d-4b6e-a2ad-94e84e1bda17
+         1   0% 3df77ff2-c248-4bc4-8149-0033215924b4
+         1   0% eb416558-f0e0-11e5-8a13-43b8d1909351
+         1   0% fe6720eb-f0e0-11e5-bdee-df0dec819a18
+         1   0% fdc429b3-f0e0-11e5-bdee-df0dec819a18
+         1   0% f509aae2-f0e0-11e5-bdee-df0dec819a18
+         1   0% f9af166f-f0e0-11e5-bdee-df0dec819a18
+         1   0% fdc477d4-f0e0-11e5-bdee-df0dec819a18
+                (19295 more values)
+  requestParameters
+     18934  98% <a Hash>
+       382   2% <a NilClass>
+  resources
+         1 100% <a Array>
+  responseElements
+     18679  97% <a NilClass>
+       637   3% <a Hash>
+  sourceIPAddress
+                (various IPs, plus names such as:)
+      4138  21% autoscaling.amazonaws.com
+       432   2% cloudformation.amazonaws.com
+  userAgent
+      5573  29% aws-sdk-java/1.10.2 Linux/2.6.32-573.18.1.el6.x86_64 OpenJDK_64-Bit_Server_VM/24.95-b01/1.7.0_95
+      4138  21% autoscaling.amazonaws.com
+      2876  15% CloudWatch-PutInstanceData/1.1.0
+      1770   9% Boto/2.38.0 Python/2.6.6 Linux/2.6.32-504.8.1.el6.x86_64
+      1485   8% Boto/2.5.2 (linux2)
+       882   5% Boto/2.38.0 Python/2.6.6 Linux/2.6.32-573.18.1.el6.x86_64
+       764   4% [aws-sdk-nodejs/2.2.33 darwin/v4.2.3]
+       575   3% aws-sdk-nodejs/2.2.33 darwin/v4.2.3
+       432   2% cloudformation.amazonaws.com
+       417   2% console.ec2.amazonaws.com
+                (29 more values)
+  userIdentity
+     19316 100% <a Hash>
+

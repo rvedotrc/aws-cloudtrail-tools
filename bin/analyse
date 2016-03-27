@@ -1,0 +1,50 @@
+#!/usr/bin/env ruby
+
+require 'json'
+
+count = 0
+field_presence_count = {}
+field_string_values = {}
+
+$stdin.each_line do |text|
+  record = JSON.parse(text)
+
+  record.entries.each do |k, v|
+    field_presence_count[k] = (field_presence_count[k] || 0) + 1
+
+    sv = (field_string_values[k] ||= {})
+    effective_string = v
+    effective_string = "<a #{v.class}>" unless v.kind_of? String
+    sv[effective_string] = (sv[effective_string] || 0) + 1
+  end
+
+  count = count + 1
+end
+
+puts "Read #{count} fields"
+puts ""
+
+puts "Keys seen:"
+field_presence_count.entries.sort_by(&:first).each do |k, c|
+  puts "%8d %3d%% %s" % [ c, (100.0*c/count).round, k ]
+end
+puts ""
+
+puts "Key values:"
+field_string_values.entries.sort_by(&:first).each do |k, freq_table|
+  puts "  #{k}"
+
+  # Show the top ten values
+  t = freq_table.values.reduce &:+
+  freq_table.entries.sort_by(&:last).reverse.take(10).each do |v, c|
+    puts "  %8d %3d%% %s" % [ c, (100.0*c/t).round, v ]
+  end
+
+  more = freq_table.count - 10
+  if more > 0
+    puts "  %8s %3s  (#{more} more values)" % [ "", "" ]
+  end
+
+end
+puts ""
+

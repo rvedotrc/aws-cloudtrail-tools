@@ -1,0 +1,33 @@
+#!/usr/bin/env ruby
+
+# Assuming that duplicate files are generally when activity is low, i.e. the
+# duplicates are small. Therefore inexpensive to diff.
+
+require 'digest'
+def get_digest(file)
+  Digest::SHA256.file(file).hexdigest
+end
+
+files = ARGV.map {|s| Dir.glob(s) }.flatten
+
+previous_file = nil
+files.each do |f|
+  size = File.stat(f).size
+  # p [ size, f ]
+  this_digest = nil
+
+  dupe = false
+  if previous_file and previous_file[:size] == size
+    # puts "Maybe dupe?"
+    previous_file[:digest] ||= get_digest(previous_file[:path])
+    this_digest = get_digest(f)
+    if previous_file[:digest] == this_digest
+      # puts "Dupe! #{this_digest}"
+      dupe = true
+    end
+  end
+  puts f unless dupe
+
+  previous_file = { path: f, size: size, digest: this_digest }
+end
+
