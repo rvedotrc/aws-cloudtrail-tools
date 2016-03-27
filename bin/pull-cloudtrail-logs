@@ -1,0 +1,122 @@
+#!/usr/bin/env ruby
+
+require 'time'
+require 'aws-sdk'
+require 'fileutils'
+
+DOWNLOAD_CONCURRENCY = 10
+
+def human_size(s)
+  suffixes = %w[ B KiB MiB GiB TiB PiB ]
+  while s > 10000 and suffixes.count > 1
+    s /= 1000
+    suffixes.shift
+  end
+  "#{s}#{suffixes.first}"
+end
+
+dry_run = false
+if ARGV.first == "-n" or ARGV.first == '--dry-run'
+  dry_run = true
+  ARGV.shift
+end
+
+ARGV.count == 5 or raise "Usage: #{$0} BUCKET ACCOUNTID REGION STARTTIME ENDTIME"
+bucket_name, account_id, region, start_str, end_str = ARGV
+
+start_time = DateTime.parse(start_str)
+end_time = DateTime.parse(end_str)
+puts "Span: #{(end_time-start_time)*24.0} hours"
+
+date = start_time.to_date
+
+s3 = Aws::S3::Client.new
+#location = s3.get_bucket_location(bucket: bucket_name).location_constraint
+
+# in the format as seen in the CT filenames
+start_t = start_time.strftime('%Y%m%dT%H%MZ')
+end_t = end_time.strftime('%Y%m%dT%H%MZ')
+
+required_objects = []
+
+while true
+  puts "Check date #{date}"
+
+  ymd = date.strftime("%Y/%m/%d")
+  r = s3.list_objects(bucket: bucket_name, prefix: "AWSLogs/#{account_id}/CloudTrail/#{region}/#{ymd}/")
+  $stderr.puts "S3 listing for #{ymd} is truncated!" if r.is_truncated
+  # is_truncated, marker, next_marker, contents
+
+  objects = r.contents.select do |o|
+    m = o.key.match /#{account_id}_CloudTrail_#{region}_(\d{8}T\d{4}Z)_/
+    m or $stderr.puts "Couldn't parse object key #{o.key}"
+    m and m[1] > start_t and m[1] < end_t
+  end
+
+  required_objects.concat objects
+
+  date = date + 1
+  break if date > end_time
+end
+
+puts "Object count is #{required_objects.count}"
+puts "Total object size is #{human_size( required_objects.map(&:size).reduce(&:+) || 0 )}"
+
+files = required_objects.map do |o|
+  { object: o, local_file: o.key, local?: File.exist?(o.key) }
+end
+
+needed_files = files.select {|f| not f[:local?]}
+
+puts "To-download count=#{needed_files.count}"
+puts "To-download size=#{human_size( needed_files.map {|f| f[:object].size}.reduce(&:+) || 0 )}"
+
+exit if dry_run
+
+@queue = needed_files
+@mutex = Mutex.new
+@bucket_name = bucket_name
+
+def drain
+  loop do
+    f = @mutex.synchronize { @queue.shift }
+    f or break
+
+    # puts "Doing a thing to download #{f[:object].key} ..."
+    FileUtils.mkdir_p File.dirname(f[:local_file])
+
+#     tmp = f[:local_file] + ".tmp"
+#     File.open(tmp, 'wb') do |file|
+#       f[:object].read do |chunk|
+#         file.write(chunk)
+#       end
+#     end
+#     File.rename tmp, f[:local_file]
+#     f[:local?] = true
+
+    system "aws", "s3", "cp", "s3://#{@bucket_name}/#{f[:object].key}", "./#{f[:local_file]}"
+    f[:success?] = $?.success?
+    if $?.success?
+      f[:local?] = true
+    end
+
+  end
+end
+
+threads = DOWNLOAD_CONCURRENCY.times.map { Thread.new { drain } }
+threads.map &:value
+
+still_needed_files = files.select {|f| not f[:local?]}
+raise "Some files still needed (#{still_needed_files.count})" unless still_needed_files.empty?
+exit 0
+
+__END__
+
+Then you could do something like (let's say to see where a particular access
+key is mentioned):
+
+for f in ./AWSLogs/*/CloudTrail/*/*/*/*/*.json.gz ; do
+  echo $f >/dev/tty
+  gunzip < $f | jq -c -M .Records[]
+done | grep AKIA.... > badkey.log
+
