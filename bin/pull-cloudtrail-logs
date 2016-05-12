@@ -21,7 +21,12 @@ if ARGV.first == "-n" or ARGV.first == '--dry-run'
   ARGV.shift
 end
 
-ARGV.count == 5 or raise "Usage: #{$0} BUCKET ACCOUNTID REGION STARTTIME ENDTIME"
+prefix = if ARGV.count == 6
+           ARGV.slice! 1
+         else
+           ""
+         end
+ARGV.count == 5 or raise "Usage: #{$0} BUCKET [PREFIX] ACCOUNTID REGION STARTTIME ENDTIME"
 bucket_name, account_id, region, start_str, end_str = ARGV
 
 start_time = DateTime.parse(start_str)
@@ -45,7 +50,7 @@ while true
   # e.g. s3://my-log-bucket/AWSLogs/123456789012/CloudTrail/eu-west-1/2016/03/25/123456789012_CloudTrail_eu-west-1_20160325T2230Z_HUERLu3a4rXsZcV0.json.gz
 
   ymd = date.strftime("%Y/%m/%d")
-  r = s3.list_objects(bucket: bucket_name, prefix: "AWSLogs/#{account_id}/CloudTrail/#{region}/#{ymd}/")
+  r = s3.list_objects(bucket: bucket_name, prefix: "#{prefix}AWSLogs/#{account_id}/CloudTrail/#{region}/#{ymd}/")
   $stderr.puts "S3 listing for #{ymd} is truncated!" if r.is_truncated
   # is_truncated, marker, next_marker, contents
 
